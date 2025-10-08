@@ -56,28 +56,26 @@ class io_handler:
 
 
 class SnakeGame:
+    DIRECTIONS = {
+        'w': (-1, 0),  # (dy, dx)
+        's': (1, 0),
+        'a': (0, -1),
+        'd': (0, 1)
+    }
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.snake_body = [(height // 2, width // 2)]  # Começa no centro
-        self.direction = 'w'  # Cima
+        self.snake_body = [(height // 2, width // 2)]
+        self.direction = 'w'
         self.game_over = False
 
     def update(self):
+        dy, dx = self.DIRECTIONS[self.direction]
+
         head_y, head_x = self.snake_body[0]
+        new_head = (head_y + dy, head_x + dx)
 
-        new_head = (head_y, head_x)
-
-        if self.direction == 'w':
-            new_head = (head_y - 1, head_x)
-        elif self.direction == 's':
-            new_head = (head_y + 1, head_x)
-        elif self.direction == 'a':
-            new_head = (head_y, head_x - 1)
-        elif self.direction == 'd':
-            new_head = (head_y, head_x + 1)
-
-        # Move a cobra
         self.snake_body.insert(0, new_head)
         self.snake_body.pop()
 
