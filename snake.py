@@ -55,13 +55,9 @@ class io_handler:
         display_h_line(self)
 
 
-# Continuação da classe SnakeGame da Etapa 2
-import random
-
-
 class SnakeGame:
-    # ... (DIRECTIONS, OPPOSITES, __init__, _spawn_fruit, change_direction, _calculate_new_head) ...
-    # Nenhuma mudança nesses métodos da fase Green
+    DIRECTIONS = {'w': (-1, 0), 's': (1, 0), 'a': (0, -1), 'd': (0, 1)}
+    OPPOSITES = {'w': 's', 's': 'w', 'a': 'd', 'd': 'a'}
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -98,13 +94,23 @@ class SnakeGame:
             self._spawn_fruit()  # Comeu: cresce e gera nova fruta
         else:
             self.snake_body.pop()  # Não comeu: apenas se move
-
+    def _check_for_collisions(self, new_head):
+        """Verifica se a nova cabeça colide com o corpo."""
+        return new_head in self.snake_body
     def update(self):
-        """Orquestra a atualização do estado do jogo a cada tick."""
+        if self.game_over:  # Adicionado para parar o jogo
+            return
+
         if self.pending_direction != self.OPPOSITES.get(self.direction):
             self.direction = self.pending_direction
 
         new_head = self._calculate_new_head()
+
+        # Lógica de colisão
+        if new_head in self.snake_body:
+            self.game_over = True
+            return
+
         self._handle_movement(new_head)
 
 if __name__ == "__main__":
