@@ -1,29 +1,16 @@
 import pytest
-from snake import SnakeGame  # Importará da versão Green desta etapa
+from snake import SnakeGame
 
-
-def test_change_direction():
-    """Testa se a direção da cobra pode ser alterada."""
+def test_snake_wraps_around_top_edge():
     game = SnakeGame(10, 10)
-    game.change_direction('d')  # Direita
-    game.update()
-
-    # Posição inicial é (5,5), movendo para 'd' deve ser (5,6)
-    assert game.snake_body[0] == (5, 6)
-
-
-def test_cannot_reverse_direction():
-    """Testa se a cobra não pode inverter sua direção."""
-    game = SnakeGame(10, 10)
-    game.snake_body = [(5, 5), (6, 5)]  # Cobra com 2 segmentos, indo para cima
+    game.snake_body = [(0, 5)] # No topo
     game.direction = 'w'
+    game.update()
+    assert game.snake_body[0] == (9, 5) # Deve aparecer na base
 
-    # Tenta ir para baixo ('s'), que é o oposto de 'w'
-    game.change_direction('s')
-
-    # A direção não deve mudar
-    assert game.direction == 'w'
-
-    # Tenta ir para o lado, o que é permitido
-    game.change_direction('a')
-    assert game.direction == 'a'
+def test_snake_wraps_around_right_edge():
+    game = SnakeGame(10, 10)
+    game.snake_body = [(5, 9)] # Na direita
+    game.direction = 'd'
+    game.update()
+    assert game.snake_body[0] == (5, 0) # Deve aparecer na esquerda
