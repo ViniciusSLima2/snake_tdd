@@ -55,7 +55,7 @@ class io_handler:
         display_h_line(self)
 
 
-# Use a versão refatorada da Etapa 1 como base
+# Continuação da classe SnakeGame da Etapa 2
 class SnakeGame:
     DIRECTIONS = {'w': (-1, 0), 's': (1, 0), 'a': (0, -1), 'd': (0, 1)}
     OPPOSITES = {'w': 's', 's': 'w', 'a': 'd', 'd': 'a'}
@@ -69,19 +69,20 @@ class SnakeGame:
         self.pending_direction = 'w'
 
     def change_direction(self, new_direction):
-        """Armazena a próxima direção de movimento."""
         self.pending_direction = new_direction
 
     def update(self):
-        """Atualiza o estado do jogo."""
-        # Valida a mudança de direção no momento do update
         if self.pending_direction != self.OPPOSITES.get(self.direction):
             self.direction = self.pending_direction
 
         dy, dx = self.DIRECTIONS[self.direction]
 
         head_y, head_x = self.snake_body[0]
-        new_head = (head_y + dy, head_x + dx)
+
+        # Lógica de wrapping
+        new_head_y = (head_y + dy) % self.height
+        new_head_x = (head_x + dx) % self.width
+        new_head = (new_head_y, new_head_x)
 
         self.snake_body.insert(0, new_head)
         self.snake_body.pop()
