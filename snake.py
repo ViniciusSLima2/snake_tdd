@@ -1,7 +1,7 @@
 import os
 import keyboard
 import time
-
+import random
 
 class io_handler:
     
@@ -67,25 +67,43 @@ class SnakeGame:
         self.direction = 'w'
         self.game_over = False
         self.pending_direction = 'w'
+        self.fruit = None
+        self._spawn_fruit()  # Adicionado
+
+    def _spawn_fruit(self):
+        """Gera uma fruta em uma posição aleatória que não esteja na cobra."""
+        while True:
+            y = random.randint(0, self.height - 1)
+            x = random.randint(0, self.width - 1)
+            if (y, x) not in self.snake_body:
+                self.fruit = (y, x)
+                return
 
     def change_direction(self, new_direction):
         self.pending_direction = new_direction
+
+    def _calculate_new_head(self):
+        dy, dx = self.DIRECTIONS[self.direction]
+        head_y, head_x = self.snake_body[0]
+        new_head_y = (head_y + dy) % self.height
+        new_head_x = (head_x + dx) % self.width
+        return (new_head_y, new_head_x)
 
     def update(self):
         if self.pending_direction != self.OPPOSITES.get(self.direction):
             self.direction = self.pending_direction
 
-        dy, dx = self.DIRECTIONS[self.direction]
+        new_head = self._calculate_new_head()
 
-        head_y, head_x = self.snake_body[0]
-
-        # Lógica de wrapping
-        new_head_y = (head_y + dy) % self.height
-        new_head_x = (head_x + dx) % self.width
-        new_head = (new_head_y, new_head_x)
+        # Lógica de comer e crescer
+        ate_fruit = (new_head == self.fruit)
 
         self.snake_body.insert(0, new_head)
-        self.snake_body.pop()
+
+        if ate_fruit:
+            self._spawn_fruit()
+        else:
+            self.snake_body.pop()  # Só remove a cauda se não comeu
 
 if __name__ == "__main__":
     # exemplo do uso da classe io_handler — só executa quando rodamos o arquivo diretamente,
