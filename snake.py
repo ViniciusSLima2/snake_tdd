@@ -66,20 +66,18 @@ class SnakeGame:
         self.snake_body = [(height // 2, width // 2)]
         self.direction = 'w'
         self.game_over = False
+        self.pending_direction = 'w'
 
     def change_direction(self, new_direction):
-        """
-        Altera a direção da cobra imediatamente,
-        a menos que seja a direção oposta.
-        """
-        # A verificação de auto-reversão só faz sentido se a cobra
-        # tiver mais de 1 segmento, mas por simplicidade no teste,
-        # vamos aplicar a lógica mesmo para tamanho 1.
-        if new_direction != self.OPPOSITES.get(self.direction):
-            self.direction = new_direction
+        """Armazena a próxima direção de movimento."""
+        self.pending_direction = new_direction
 
     def update(self):
         """Atualiza o estado do jogo."""
+        # Valida a mudança de direção no momento do update
+        if self.pending_direction != self.OPPOSITES.get(self.direction):
+            self.direction = self.pending_direction
+
         dy, dx = self.DIRECTIONS[self.direction]
 
         head_y, head_x = self.snake_body[0]
