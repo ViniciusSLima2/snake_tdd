@@ -5,11 +5,12 @@ from snake import SnakeGame
 def test_game_over_on_self_collision():
     """Testa se game_over se torna True ao colidir com o corpo."""
     game = SnakeGame(10, 10)
-    # Força um estado onde a próxima jogada é uma colisão
-    # Cobra em forma de 'C', indo para cima ('w') em direção ao próprio corpo
+    # Cobra em forma de 'C'.
     game.snake_body = [(5, 5), (5, 6), (6, 6), (6, 5)]
-    game.direction = 'w'
-    game.pending_direction = 'w'
+
+    # Mude a direção para 's' (baixo) para forçar a colisão com a cauda (6, 5)
+    game.direction = 's'
+    game.pending_direction = 's'
 
     assert game.game_over is False
     game.update()
@@ -20,8 +21,10 @@ def test_snake_stops_moving_after_game_over():
     """Testa se o jogo para de ser atualizado após o game over."""
     game = SnakeGame(10, 10)
     game.snake_body = [(5, 5), (5, 6), (6, 6), (6, 5)]
-    game.direction = 'w'
-    game.pending_direction = 'w'
+
+    # Mude a direção para 's' (baixo) para forçar a colisão
+    game.direction = 's'
+    game.pending_direction = 's'
 
     game.update()  # Primeira atualização causa o game over
     assert game.game_over is True
