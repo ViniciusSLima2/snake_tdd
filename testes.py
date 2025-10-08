@@ -21,7 +21,11 @@ def test_spawns_two_fruits_at_length_10():
     head_y, head_x = game.snake_body[0]
     game.direction = 'w'
     game.pending_direction = 'w'
-    game.fruits = [(head_y - 1, head_x)]
+
+    # --- CORREÇÃO AQUI ---
+    # Calcula a posição da fruta usando a mesma lógica de wrapping do jogo
+    fruit_pos = ((head_y - 1) % game.height, head_x)
+    game.fruits = [fruit_pos]
 
     game.update()  # Cobra come e cresce para o tamanho 10
 
@@ -37,7 +41,11 @@ def test_spawns_three_fruits_at_length_20():
     head_y, head_x = game.snake_body[0]
     game.direction = 'w'
     game.pending_direction = 'w'
-    game.fruits = [(head_y - 1, head_x)]
+
+    # --- CORREÇÃO AQUI ---
+    # Calcula a posição da fruta usando a mesma lógica de wrapping do jogo
+    fruit_pos = ((head_y - 1) % game.height, head_x)
+    game.fruits = [fruit_pos]
 
     game.update()
 
