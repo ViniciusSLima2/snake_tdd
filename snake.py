@@ -55,13 +55,10 @@ class io_handler:
         display_h_line(self)
 
 
+# Use a versão refatorada da Etapa 1 como base
 class SnakeGame:
-    DIRECTIONS = {
-        'w': (-1, 0),  # (dy, dx)
-        's': (1, 0),
-        'a': (0, -1),
-        'd': (0, 1)
-    }
+    DIRECTIONS = {'w': (-1, 0), 's': (1, 0), 'a': (0, -1), 'd': (0, 1)}
+    OPPOSITES = {'w': 's', 's': 'w', 'a': 'd', 'd': 'a'}
 
     def __init__(self, width, height):
         self.width = width
@@ -70,7 +67,19 @@ class SnakeGame:
         self.direction = 'w'
         self.game_over = False
 
+    def change_direction(self, new_direction):
+        """
+        Altera a direção da cobra imediatamente,
+        a menos que seja a direção oposta.
+        """
+        # A verificação de auto-reversão só faz sentido se a cobra
+        # tiver mais de 1 segmento, mas por simplicidade no teste,
+        # vamos aplicar a lógica mesmo para tamanho 1.
+        if new_direction != self.OPPOSITES.get(self.direction):
+            self.direction = new_direction
+
     def update(self):
+        """Atualiza o estado do jogo."""
         dy, dx = self.DIRECTIONS[self.direction]
 
         head_y, head_x = self.snake_body[0]
