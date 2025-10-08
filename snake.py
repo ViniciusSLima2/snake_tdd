@@ -66,20 +66,24 @@ class SnakeGame:
         self.game_over = False
         self.pending_direction = 'w'
         self.fruits = []
-        self._spawn_fruits()
+        self._spawn_missing_fruits()
 
-    def _spawn_fruits(self):
-        """Gera o número correto de frutas em locais válidos."""
-        self.fruits.clear()
-        num_fruits = 1 + (len(self.snake_body) // 10)
+    def _spawn_missing_fruits(self):
+        """Preenche a tela com o número necessário de frutas."""
+        num_required = 1 + (len(self.snake_body) // 10)
 
-        while len(self.fruits) < num_fruits:
+        while len(self.fruits) < num_required:
+            self._add_one_fruit()
+
+    def _add_one_fruit(self):
+        """Adiciona uma única fruta em um local válido."""
+        while True:
             y = random.randint(0, self.height - 1)
             x = random.randint(0, self.width - 1)
             pos = (y, x)
-            # Evita gerar em cima da cobra ou de outra fruta
             if pos not in self.snake_body and pos not in self.fruits:
                 self.fruits.append(pos)
+                return
 
     def change_direction(self, new_direction):
         self.pending_direction = new_direction
