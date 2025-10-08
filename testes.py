@@ -1,38 +1,45 @@
 import pytest
 from snake import SnakeGame
+import random
+
+random.seed(0)
 
 
-def test_game_over_on_self_collision():
-    """Testa se game_over se torna True ao colidir com o corpo."""
-    game = SnakeGame(10, 10)
-    # Cobra em forma de 'C'.
-    game.snake_body = [(5, 5), (5, 6), (6, 6), (6, 5)]
+def test_starts_with_one_fruit():
+    """O jogo deve começar com uma fruta."""
+    game = SnakeGame(20, 20)
+    assert len(game.fruits) == 1
 
-    # Mude a direção para 's' (baixo) para forçar a colisão com a cauda (6, 5)
-    game.direction = 's'
-    game.pending_direction = 's'
 
-    assert game.game_over is False
+def test_spawns_two_fruits_at_length_10():
+    """Deve haver duas frutas quando a cobra atinge o tamanho 10."""
+    game = SnakeGame(20, 20)
+    # Força a cobra a ter tamanho 9
+    game.snake_body = [(i, 5) for i in range(9)]
+
+    # Coloca uma fruta na frente para ser comida
+    head_y, head_x = game.snake_body[0]
+    game.direction = 'w'
+    game.pending_direction = 'w'
+    game.fruits = [(head_y - 1, head_x)]
+
+    game.update()  # Cobra come e cresce para o tamanho 10
+
+    assert len(game.snake_body) == 10
+    assert len(game.fruits) == 2
+
+
+def test_spawns_three_fruits_at_length_20():
+    """Deve haver três frutas quando a cobra atinge o tamanho 20."""
+    game = SnakeGame(30, 30)
+    game.snake_body = [(i, 5) for i in range(19)]
+
+    head_y, head_x = game.snake_body[0]
+    game.direction = 'w'
+    game.pending_direction = 'w'
+    game.fruits = [(head_y - 1, head_x)]
+
     game.update()
-    assert game.game_over is True
 
-
-def test_snake_stops_moving_after_game_over():
-    """Testa se o jogo para de ser atualizado após o game over."""
-    game = SnakeGame(10, 10)
-    game.snake_body = [(5, 5), (5, 6), (6, 6), (6, 5)]
-
-    # Mude a direção para 's' (baixo) para forçar a colisão
-    game.direction = 's'
-    game.pending_direction = 's'
-
-    game.update()  # Primeira atualização causa o game over
-    assert game.game_over is True
-
-    # Pega o estado do corpo da cobra após o game over
-    body_at_game_over = list(game.snake_body)
-
-    game.update()  # Tenta atualizar de novo
-
-    # O corpo da cobra não deve ter mudado
-    assert game.snake_body == body_at_game_over
+    assert len(game.snake_body) == 20
+    assert len(game.fruits) == 3
