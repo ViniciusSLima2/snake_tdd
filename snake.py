@@ -56,10 +56,12 @@ class io_handler:
 
 
 # Continuação da classe SnakeGame da Etapa 2
-class SnakeGame:
-    DIRECTIONS = {'w': (-1, 0), 's': (1, 0), 'a': (0, -1), 'd': (0, 1)}
-    OPPOSITES = {'w': 's', 's': 'w', 'a': 'd', 'd': 'a'}
+import random
 
+
+class SnakeGame:
+    # ... (DIRECTIONS, OPPOSITES, __init__, _spawn_fruit, change_direction, _calculate_new_head) ...
+    # Nenhuma mudança nesses métodos da fase Green
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -68,10 +70,9 @@ class SnakeGame:
         self.game_over = False
         self.pending_direction = 'w'
         self.fruit = None
-        self._spawn_fruit()  # Adicionado
+        self._spawn_fruit()
 
     def _spawn_fruit(self):
-        """Gera uma fruta em uma posição aleatória que não esteja na cobra."""
         while True:
             y = random.randint(0, self.height - 1)
             x = random.randint(0, self.width - 1)
@@ -89,21 +90,22 @@ class SnakeGame:
         new_head_x = (head_x + dx) % self.width
         return (new_head_y, new_head_x)
 
+    def _handle_movement(self, new_head):
+        """Atualiza o corpo da cobra e lida com o crescimento."""
+        self.snake_body.insert(0, new_head)
+
+        if new_head == self.fruit:
+            self._spawn_fruit()  # Comeu: cresce e gera nova fruta
+        else:
+            self.snake_body.pop()  # Não comeu: apenas se move
+
     def update(self):
+        """Orquestra a atualização do estado do jogo a cada tick."""
         if self.pending_direction != self.OPPOSITES.get(self.direction):
             self.direction = self.pending_direction
 
         new_head = self._calculate_new_head()
-
-        # Lógica de comer e crescer
-        ate_fruit = (new_head == self.fruit)
-
-        self.snake_body.insert(0, new_head)
-
-        if ate_fruit:
-            self._spawn_fruit()
-        else:
-            self.snake_body.pop()  # Só remove a cauda se não comeu
+        self._handle_movement(new_head)
 
 if __name__ == "__main__":
     # exemplo do uso da classe io_handler — só executa quando rodamos o arquivo diretamente,
