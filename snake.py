@@ -65,16 +65,21 @@ class SnakeGame:
         self.direction = 'w'
         self.game_over = False
         self.pending_direction = 'w'
-        self.fruit = None
-        self._spawn_fruit()
+        self.fruits = []
+        self._spawn_fruits()
 
-    def _spawn_fruit(self):
-        while True:
+    def _spawn_fruits(self):
+        """Gera o número correto de frutas em locais válidos."""
+        self.fruits.clear()
+        num_fruits = 1 + (len(self.snake_body) // 10)
+
+        while len(self.fruits) < num_fruits:
             y = random.randint(0, self.height - 1)
             x = random.randint(0, self.width - 1)
-            if (y, x) not in self.snake_body:
-                self.fruit = (y, x)
-                return
+            pos = (y, x)
+            # Evita gerar em cima da cobra ou de outra fruta
+            if pos not in self.snake_body and pos not in self.fruits:
+                self.fruits.append(pos)
 
     def change_direction(self, new_direction):
         self.pending_direction = new_direction
@@ -87,16 +92,21 @@ class SnakeGame:
         return (new_head_y, new_head_x)
 
     def _handle_movement(self, new_head):
-        """Atualiza o corpo da cobra e lida com o crescimento."""
         self.snake_body.insert(0, new_head)
 
-        if new_head == self.fruit:
-            self._spawn_fruit()  # Comeu: cresce e gera nova fruta
+        # Lógica de comer modificada para lista
+        if new_head in self.fruits:
+            self.fruits.remove(new_head)
+            # A cada fruta comida, simplesmente recriamos todas
+            # para garantir o número correto.
+            self._spawn_fruits()
         else:
-            self.snake_body.pop()  # Não comeu: apenas se move
+            self.snake_body.pop()
+
     def _check_for_collisions(self, new_head):
         """Verifica se a nova cabeça colide com o corpo."""
         return new_head in self.snake_body
+
     def update(self):
         if self.game_over:  # Adicionado para parar o jogo
             return
