@@ -1,25 +1,29 @@
 import pytest
-from snake import SnakeGame  # Irá falhar, pois snake.py não tem SnakeGame ainda
+from snake import SnakeGame  # Importará da versão Green desta etapa
 
 
-def test_snake_creation_and_initial_position():
-    """Testa se a cobra é criada na posição correta."""
-    game = SnakeGame(width=10, height=10)
-    # Posição inicial esperada no centro
-    expected_head_pos = (5, 5)
-    assert game.snake_body[0] == expected_head_pos
+def test_change_direction():
+    """Testa se a direção da cobra pode ser alterada."""
+    game = SnakeGame(10, 10)
+    game.change_direction('d')  # Direita
+    game.update()
+
+    # Posição inicial é (5,5), movendo para 'd' deve ser (5,6)
+    assert game.snake_body[0] == (5, 6)
 
 
-def test_snake_moves_forward():
-    """Testa se a cobra se move um passo para frente."""
-    # A direção inicial padrão é 'w' (para cima)
-    game = SnakeGame(width=10, height=10)
-    initial_pos = game.snake_body[0]  # (5, 5)
+def test_cannot_reverse_direction():
+    """Testa se a cobra não pode inverter sua direção."""
+    game = SnakeGame(10, 10)
+    game.snake_body = [(5, 5), (6, 5)]  # Cobra com 2 segmentos, indo para cima
+    game.direction = 'w'
 
-    game.update()  # Move a cobra
+    # Tenta ir para baixo ('s'), que é o oposto de 'w'
+    game.change_direction('s')
 
-    new_pos = game.snake_body[0]
-    expected_pos = (4, 5)  # Um passo para cima de (5, 5)
+    # A direção não deve mudar
+    assert game.direction == 'w'
 
-    assert new_pos == expected_pos
-    assert len(game.snake_body) == 1  # A cobra ainda tem tamanho 1
+    # Tenta ir para o lado, o que é permitido
+    game.change_direction('a')
+    assert game.direction == 'a'
